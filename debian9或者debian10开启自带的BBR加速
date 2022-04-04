@@ -1,0 +1,18 @@
+debian9或者debian10开启自带的BBR加速
+1.使用Xshell之类的程序连接你的Debian9系统服务器，然后全选如下命令粘贴到Xshell执行（作用：改变系统变量）
+
+echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+2.然后执行如下命令（作用：保存上一步的修改并生效）
+
+sysctl -p
+3.接着执行如下命令
+
+sysctl net.ipv4.tcp_available_congestion_control
+如果Xshell显示如下内容，说明BBR就开启了。
+
+sysctl net.ipv4.tcp_available_congestion_control
+net.ipv4.tcp_available_congestion_control = bbr cubic reno
+4.最后执行如下命令，如果显示tcp_bbr +数字 说明BBR已开启成功。
+
+lsmod | grep bbr
