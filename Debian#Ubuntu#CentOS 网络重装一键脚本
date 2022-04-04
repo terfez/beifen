@@ -23,7 +23,7 @@ wget --no-check-certificate -qO InstallNET.sh 'https://moeclub.org/attachment/Li
 #蜗牛789备用：
 wget --no-check-certificate -qO InstallNET.sh 'https://raw.githubusercontent.com/wn789/xitong/master/InstallNET.sh' && chmod a+x InstallNET.sh
 三、系统重装命令
-在下面选择将要按的的系统，运行对应命令即可，一般20-30分钟就会安装完成。装默认root密码：Vicer。
+在下面选择将要按的的系统，运行对应命令即可，一般20-30分钟就会安装完成。装默认root密码：MoeClub.org或者Vicer。
 
 安装CentOS 6.8 x32：
 
