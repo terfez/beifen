@@ -1,0 +1,135 @@
+BBR新版脚本以及优化
+这篇文章是给翻墙的小伙伴们看的，在你刚买到服务器准备搭建翻墙的时候，运行一下本篇文章的脚本，进行一下BBR的优化。
+
+本篇文章用到的脚本总共有两个。
+
+ 
+
+# BBR开启和选择模式脚本 
+wget -N --no-check-certificate "https://github.000060000.xyz/tcpx.sh" && chmod +x tcpx.sh && ./tcpx.sh 
+
+# BBR优化脚本 
+bash <(curl -Ls https://github.com/lanziii/bbr-/releases/download/123/tools.sh)
+这里讲一下脚本的运行情况。
+
+重装系统
+这里呢，系统是可以不重装的，不过还是推荐用debian，现在是debian9以上的系统可以不重装直接运行脚本。centos用户不重装可以自己在脚本里面安装新版的内核即可。
+
+推荐大家用debian的系统，debian11内核比较完善和比较新，搭建X-UI也不会出现端口未开放的问题。
+
+下面的端口和密码你自己随便设置，端口一般是22
+
+bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -d 11 -v 64 -p "密码" -port "端口"
+ 
+
+BBR开启脚本
+wget -N --no-check-certificate "https://github.000060000.xyz/tcpx.sh" && chmod +x tcpx.sh && ./tcpx.sh
+ 
+
+运行此行脚本以后，如果出现wget找不到命令，那就是服务器没有安装wget，进行下面的操作，如果上面的脚本运行成功就不需要下面的这一步操作。
+
+# debian/ubuntu 用下面这行
+apt install wget -y
+# centos用下面这行 
+yum install wget
+ 
+
+脚本运行成功的截图是这样的
+
+
+如果你的系统是debian10以上以及ubuntu18以上，那么直接选择11就可以。如果你不放心或者不知道自己的内核版本，直接选择31或者32（建议选32），然后再运行一次脚本，选择11就可以了。
+
+bbr+fq启动成功以后，会提示你把系统重启，这个时候输入reboot然后回车即可重启。
+
+到此位置，BBR+fq就已经开启好了。下面的这一行字是方便大家后期再自己进行调试，试试哪个速度快。进行完这一步就可以进行bbr调优了。
+
+同样，这个脚本还可以使用xanmod轻量高相应内核，（比较激进，暂时不完善）还有使用锐速。也同样可以在重启以后再运行脚本选择应用johnrosen1的优化方案或者系统配置优化，提示重启的话再reboot就好。
+
+BBR优化
+这里运行的是这个脚本
+
+bash <(curl -Ls https://github.com/lanziii/bbr-/releases/download/123/tools.sh)
+
+ 
+
+这个就很简单了，运行脚本之后运行2，然后再运行脚本，运行3就好。
+
+版权声明：
+作者：daung
+链接：https://www.duangvps.com/archives/1778
+来源：Duang's Blog
+文章版权归作者所有，未经允许请勿转载。
+
+X-ui面板安装以及ssl申请
+
+X-ui介绍
+x-ui的github项目地址：https://github.com/vaxilu/x-ui
+
+系统状态监控
+支持多用户多协议，网页浏览化操作
+支持的协议：vmess、vless、trojan、shadowsocks、dokodemo-door、socks、http
+支持配置 更多传输配置
+流量统计，限制流量，限制时间
+可自定义xray配置模板
+支持https访问面板（自备域名+ssl证书）
+更多高级配置项，详见面板
+BBR安装
+安装x-ui前记得安装bbr加速，看这里：BBR新版脚本以及优化
+
+X-UI一键脚本
+bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
+ 
+
+安装完成后默认是IP:54321访问面板。默认密码是admin；admin，默认密码不安全，请到面板后台更改用户名和密码。
+
+TLS安装前准备步骤
+socat
+其实不需要SOCAT也可以，不过安装X-UI以后我们使用v2或者trojan的ssl加密的时候需要ssl证书，这个时候我们需要Acme配合NGINX/SOCAT申请证书。
+
+当你的服务器上有nginx或者宝塔面板时，就不需要安装socat了，在这个时候执行是申请SSL脚本会提示80端口被占用出错。
+
+1. Debian/Ubuntu安装socat
+apt update -y 
+apt install -y curl 
+apt install -y socat
+ 
+
+2. centos安装socat
+yum update -y 
+yum install -y curl 
+yum install -y socat
+ 
+
+安装 Acme
+curl https://get.acme.sh | sh
+ 
+
+申请证书
+需要准备一个邮箱（非必须）和域名解析到你的IP
+
+~/.acme.sh/acme.sh --register-account -m 你的邮箱 
+
+~/.acme.sh/acme.sh --issue -d 你的域名 --standalone
+ 
+
+改证书存放位置
+~/.acme.sh/acme.sh --installcert -d 你的域名 --key-file /root/private.key --fullchain-file /root/cert.crt
+ 
+
+TLS具体配置
+1. 怎么开启TLS
+在后台选择搭建节点的时候是vmess/trojan/ss/vless等都可以开启tls选项。开启TLS选项后需要绑定域名，这里我们填写刚刚申请了ssl的域名，证书位置是 /root/cert.crt 密钥位置是 /root/private.key
+
+端口选择443，注意因为x-ui没有域名回落，所以我们搭建在443上的翻墙只能有一个。
+
+
+关于x-ui和宝塔共存问题
+本人十分不建议宝塔和x-ui共存！
+搭建起来麻烦，并且除非是手头紧到买不起多的服务器，还同时需要建站+翻墙的。
+还有，把翻墙反代到博客下面不会带来任何一点点比TLS安全的防封措施，除非你的站点是每天几千几万IP的大站，并且还得是个大流量视频站，可能gfw会觉得你这个流量是视频流量，不然该封一样封。
+而且，你翻墙万一IP被ban了，你的博客咋办，然后再迁移吗？
+版权声明：
+作者：daung
+链接：https://www.duangvps.com/archives/1776
+来源：Duang's Blog
+文章版权归作者所有，未经允许请勿转载。
